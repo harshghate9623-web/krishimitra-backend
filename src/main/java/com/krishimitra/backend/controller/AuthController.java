@@ -1,4 +1,4 @@
-﻿package com.krishimitra.backend.controller;
+package com.krishimitra.backend.controller;
 import com.krishimitra.backend.dto.LoginRequest;
 import com.krishimitra.backend.dto.RegisterRequest;
 import com.krishimitra.backend.service.AuthService;

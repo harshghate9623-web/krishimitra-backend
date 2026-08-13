@@ -1,4 +1,4 @@
-﻿package com.krishimitra.backend;
+package com.krishimitra.backend;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
