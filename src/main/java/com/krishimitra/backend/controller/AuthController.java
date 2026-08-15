@@ -15,12 +15,15 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/register")
-    public Map<String, String> register(
+    public ResponseEntity<?> register(
             @RequestBody RegisterRequest request) {
 
         String msg = authService.register(request);
+        if (!"User created successfully".equals(msg)) {
+            return ResponseEntity.badRequest().body(Map.of("message", msg));
+        }
 
-        return Map.of("message", msg);
+        return ResponseEntity.ok(Map.of("message", msg));
     }
 
     @PostMapping("/login")
