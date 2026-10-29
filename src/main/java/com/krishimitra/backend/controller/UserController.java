@@ -15,23 +15,31 @@ public class UserController {
 
     private final UserRepository userRepository;
 
+    // Returns only safe fields — never exposes password hash or internal fields
     @GetMapping("/{uid}")
-    public User getUser(@PathVariable Long uid) {
-        return userRepository.findById(uid).orElse(null);
+    public ResponseEntity<?> getUser(@PathVariable Long uid) {
+        User user = userRepository.findById(uid).orElse(null);
+        if (user == null) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(Map.of(
+                "uid", user.getUid(),
+                "name", user.getName() != null ? user.getName() : "",
+                "email", user.getEmail() != null ? user.getEmail() : "",
+                "phone", user.getPhone() != null ? user.getPhone() : ""
+        ));
     }
 
+    // Accepts a map — only name and phone can be updated (email is immutable after registration)
     @PutMapping("/{uid}")
     public String updateUser(
             @PathVariable Long uid,
-            @RequestBody User request
+            @RequestBody Map<String, String> request
     ) {
-
         User user = userRepository.findById(uid).orElse(null);
 
         if (user == null) return "User not found";
 
-        user.setName(request.getName());
-        user.setPhone(request.getPhone());
+        if (request.containsKey("name")) user.setName(request.get("name"));
+        if (request.containsKey("phone")) user.setPhone(request.get("phone"));
 
         userRepository.save(user);
 

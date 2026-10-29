@@ -1,4 +1,5 @@
 package com.krishimitra.backend.controller;
+import com.krishimitra.backend.dto.AddFarmRequest;
 import com.krishimitra.backend.dto.FarmUpdateRequest;
 import com.krishimitra.backend.entity.Farm;
 import com.krishimitra.backend.repository.FarmRepository;
@@ -18,6 +19,7 @@ public class FarmController {
     public List<Farm> getUserFarms(@PathVariable Long uid) {
         return farmRepository.findByUserUid(uid);
     }
+
     @PutMapping("/{id}")
     public String updateFarm(
             @PathVariable Long id,
@@ -40,13 +42,22 @@ public class FarmController {
 
         return "Farm updated";
     }
+
+    // Accepts a proper DTO — prevents id/createdAt injection via raw entity
     @PostMapping("/add")
-    public String addFarm(@RequestBody Farm farm) {
-
+    public String addFarm(@RequestBody AddFarmRequest request) {
+        Farm farm = new Farm();
+        farm.setUserUid(request.getUserUid());
+        farm.setName(request.getName());
+        farm.setSize(request.getSize());
+        farm.setLocation(request.getLocation());
+        farm.setCurrentCrop(request.getCurrentCrop());
+        farm.setSoilN(request.getSoilN() != null ? request.getSoilN() : 0.0);
+        farm.setSoilP(request.getSoilP() != null ? request.getSoilP() : 0.0);
+        farm.setSoilK(request.getSoilK() != null ? request.getSoilK() : 0.0);
+        farm.setProgress(0);
         farm.setCreatedAt(LocalDateTime.now());
-
         farmRepository.save(farm);
-
         return "Farm added";
     }
 
